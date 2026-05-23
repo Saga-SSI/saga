@@ -17,50 +17,37 @@
   "appearance": {
     "default": "dark"
   },
+  "fonts": {
+    "family": "Sorts Mill Goudy",
+    "heading": {
+      "family": "Sorts Mill Goudy"
+    }
+  },
   "favicon": "/favicon.svg",
   "logo": {
-    "light": "/logo.svg",
-    "dark": "/logo.svg",
-    "href": "/docs"
+    "light": "/logo-light.svg",
+    "dark": "/logo-dark.svg",
+    "href": "http://localhost:3000"
   },
   "navigation": {
-    "tabs": [
+    "groups": [
       {
-        "tab": "Docs",
-        "groups": [
-          {
-            "group": "Get started",
-            "pages": ["index", "quickstart"]
-          }
-        ]
+        "group": "Get started",
+        "pages": ["index", "quickstart"]
       },
       {
-        "tab": "Platform",
-        "groups": [
-          {
-            "group": "Platform",
-            "pages": [
-              "platform/dashboard",
-              "platform/cursor-agent",
-              "platform/mintlify"
-            ]
-          }
-        ]
+        "group": "Platform",
+        "pages": ["platform/dashboard", "platform/cursor-agent", "platform/mintlify"]
       }
     ]
   },
   "navbar": {
     "links": [
       {
-        "label": "Documentation",
-        "href": "/documentation"
+        "label": "App",
+        "href": "http://localhost:3000/dashboard"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "/dashboard"
-    }
+    ]
   },
   "footer": {
     "socials": {
