@@ -14,31 +14,53 @@
       "dark": "#1C1C1C"
     }
   },
+  "appearance": {
+    "default": "dark"
+  },
   "favicon": "/favicon.svg",
   "logo": {
     "light": "/logo.svg",
     "dark": "/logo.svg",
-    "href": "http://localhost:3000"
+    "href": "/docs"
   },
   "navigation": {
-    "groups": [
+    "tabs": [
       {
-        "group": "Get started",
-        "pages": ["index", "quickstart"]
+        "tab": "Docs",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["index", "quickstart"]
+          }
+        ]
       },
       {
-        "group": "Platform",
-        "pages": ["platform/dashboard", "platform/cursor-agent", "platform/mintlify"]
+        "tab": "Platform",
+        "groups": [
+          {
+            "group": "Platform",
+            "pages": [
+              "platform/dashboard",
+              "platform/cursor-agent",
+              "platform/mintlify"
+            ]
+          }
+        ]
       }
     ]
   },
   "navbar": {
     "links": [
       {
-        "label": "App",
-        "href": "http://localhost:3000/dashboard"
+        "label": "Documentation",
+        "href": "/documentation"
       }
-    ]
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "/dashboard"
+    }
   },
   "footer": {
     "socials": {
