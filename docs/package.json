@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "mint dev --port 3333 --no-open",
+    "validate": "mint validate"
+  }
+}

@@ -1,0 +1,34 @@
+---
+title: Mintlify Integration
+description: Saga documentation and in-app docs assistant powered by Mintlify.
+---
+
+# Mintlify Integration
+
+Saga uses [Mintlify](https://mintlify.com) for documentation and an in-app docs assistant.
+
+## Documentation site
+
+This folder (`docs/`) is the Mintlify source of truth. Deploy it by connecting the repo to Mintlify at [mintlify.com/start](https://mintlify.com/start).
+
+Preview locally:
+
+```bash
+npm run docs:dev
+```
+
+## In-app assistant
+
+The **Docs Assistant** widget calls `POST /api/mintlify/assistant`, which proxies to the Mintlify Assistant API. Your assistant token stays on the server in `MINTLIFY_ASSISTANT_TOKEN`.
+
+Required env vars:
+
+| Variable | Description |
+| --- | --- |
+| `MINTLIFY_DOMAIN` | Project slug from your Mintlify dashboard URL |
+| `MINTLIFY_ASSISTANT_TOKEN` | Assistant key (`mint_dsc_…`) |
+| `MINTLIFY_DOCS_URL` | Public docs URL for source links |
+
+## Customize assistant behavior
+
+Edit `docs/Assistant.md` to shape tone, persona, and focus areas for the Mintlify assistant.

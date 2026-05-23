@@ -12,6 +12,20 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      maxWidth: {
+        content: "72rem",
+      },
+      minWidth: {
+        content: "72rem",
+      },
+      fontFamily: {
+        helvetica: [
+          "Helvetica",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif",
+        ],
+      },
     },
   },
   plugins: [],

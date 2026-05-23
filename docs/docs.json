@@ -1,0 +1,43 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "maple",
+  "name": "Saga",
+  "description": "Documentation for Saga — communities building on the interweb.",
+  "colors": {
+    "primary": "#E8E4DC",
+    "light": "#E8E4DC",
+    "dark": "#1C1C1C"
+  },
+  "background": {
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#1C1C1C"
+    }
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get started",
+        "pages": ["index", "quickstart"]
+      },
+      {
+        "group": "Platform",
+        "pages": ["platform/dashboard", "platform/cursor-agent", "platform/mintlify"]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "App",
+        "href": "http://localhost:3000/dashboard"
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com"
+    }
+  }
+}

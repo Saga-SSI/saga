@@ -1,0 +1,56 @@
+---
+title: Quickstart
+description: Run Saga locally and connect Cursor and Mintlify.
+---
+
+# Quickstart
+
+Get Saga running on your machine in a few minutes.
+
+## Prerequisites
+
+- Node.js 20.17+
+- npm
+
+## Install and run
+
+```bash
+git clone <your-repo-url>
+cd saga
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the marketing site and [http://localhost:3000/dashboard](http://localhost:3000/dashboard) for the workspace.
+
+## Environment variables
+
+Add these to `.env.local`:
+
+| Variable | Description |
+| --- | --- |
+| `CURSOR_API_KEY` | Cursor SDK key from [Cursor Integrations](https://cursor.com/dashboard/integrations) |
+| `MINTLIFY_DOMAIN` | Your Mintlify project slug (from dashboard URL) |
+| `MINTLIFY_ASSISTANT_TOKEN` | Assistant API key (`mint_dsc_…`) from Mintlify dashboard |
+| `MINTLIFY_DOCS_URL` | Your deployed docs URL, e.g. `https://saga.mintlify.app` |
+
+## Preview documentation locally
+
+From the repo root:
+
+```bash
+npm run docs:dev
+```
+
+This runs Mintlify on port `3333` so it does not conflict with the Next.js app on `3000`.
+
+## Verify integrations
+
+```bash
+# Cursor one-shot prompt
+npm run cursor:ask -- "What is this project?"
+
+# Mintlify auth (with dev server running)
+curl http://localhost:3000/api/mintlify/status
+```

@@ -1,0 +1,31 @@
+---
+title: Cursor Agent
+description: Programmatic Cursor agents in Saga via the TypeScript SDK.
+---
+
+# Cursor Agent
+
+Saga integrates the [Cursor TypeScript SDK](https://cursor.com/docs/sdk/typescript) to run local agents against your repository from the web app.
+
+## How it works
+
+1. The dashboard sends prompts to `POST /api/agent`.
+2. The API runs a **local** Cursor agent with `cwd` set to the project root.
+3. Events stream back over Server-Sent Events (SSE).
+4. Multi-turn conversations resume via `agentId`.
+
+## CLI
+
+You can also run one-shot prompts from the terminal:
+
+```bash
+npm run cursor:ask -- "Summarize the dashboard architecture"
+```
+
+## Authentication
+
+Set `CURSOR_API_KEY` in `.env.local`. User keys and service account keys are supported.
+
+## Billing
+
+SDK runs follow the same pricing as Cursor IDE and Cloud Agents. Usage appears under the SDK tag in your [usage dashboard](https://cursor.com/dashboard/usage).
