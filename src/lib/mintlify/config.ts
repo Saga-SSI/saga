@@ -1,4 +1,14 @@
-const DEFAULT_DOCS_URL = "http://localhost:3333";
+const DEFAULT_DOCS_URL = "http://localhost:3000/docs";
+
+function getDefaultDocsUrl() {
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ??
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : DEFAULT_DOCS_URL.replace(/\/docs$/, ""));
+
+  return `${appUrl.replace(/\/$/, "")}/docs`;
+}
 
 export type MintlifyPublicConfig = {
   domain: string;
@@ -15,7 +25,7 @@ export function getMintlifyServerConfig() {
   const docsUrl =
     process.env.MINTLIFY_DOCS_URL?.trim() ??
     process.env.NEXT_PUBLIC_MINTLIFY_DOCS_URL?.trim() ??
-    DEFAULT_DOCS_URL;
+    getDefaultDocsUrl();
 
   return { domain, token, docsUrl };
 }

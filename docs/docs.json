@@ -15,6 +15,11 @@
     }
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo.svg",
+    "dark": "/logo.svg",
+    "href": "http://localhost:3000"
+  },
   "navigation": {
     "groups": [
       {

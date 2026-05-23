@@ -22,7 +22,7 @@ function MinimizeIcon() {
 
 const FALLBACK_CONFIG: MintlifyPublicConfig = {
   domain: "",
-  docsUrl: "http://localhost:3333",
+  docsUrl: "http://localhost:3000/docs",
   configured: false,
 };
 
