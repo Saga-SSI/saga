@@ -9,6 +9,12 @@ function getMintlifySlug() {
 }
 
 function getMintlifyRewriteTargets() {
+  const localDev = process.env.MINTLIFY_LOCAL_DEV_URL?.trim();
+  if (process.env.NODE_ENV === "development" && localDev) {
+    const base = localDev.replace(/\/$/, "");
+    return { docsBase: base, assetsBase: base };
+  }
+
   const explicit = process.env.MINTLIFY_REWRITE_URL?.trim();
   if (explicit) {
     const normalized = explicit.replace(/\/$/, "");

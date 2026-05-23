@@ -70,6 +70,7 @@ const navLinkCenter = `${navLinkChip} !px-2 hover:bg-[#2F2F2F]`;
 const navLinkVillage = `village-trigger ${navLinkChip} !px-2 hover:bg-[#2A2A2A]`;
 const navLinkAuth = `${navLinkChip} hover:text-[#FF4000]`;
 const navLinkApply = `${navLink} bg-[#FF4000] transition-opacity hover:opacity-90`;
+const locationLabel = `${robotoMono.className} text-sm font-normal uppercase tracking-tight text-white`;
 
 export default function Navbar() {
   const menuId = useId();
@@ -145,7 +146,7 @@ export default function Navbar() {
           id={menuId}
           role="menu"
           aria-labelledby={groupId}
-          className="village-menu invisible pointer-events-none absolute left-1/2 top-full z-50 w-[32rem] -translate-x-1/2 opacity-0 transition-[opacity,visibility] duration-200 before:absolute before:inset-x-0 before:bottom-full before:h-3 before:content-[''] group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:visible group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:pointer-events-auto group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:opacity-100"
+          className="village-menu invisible pointer-events-none absolute left-1/2 top-full z-50 mt-3 w-[32rem] -translate-x-1/2 opacity-0 transition-[opacity,visibility] duration-200 before:absolute before:inset-x-0 before:bottom-full before:h-5 before:content-[''] group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:visible group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:pointer-events-auto group-has-[.village-trigger:hover,.village-menu:hover,.village-trigger:focus-visible,.village-menu:focus-within]/village:opacity-100"
         >
           <div className="box-border border-x border-b border-solid border-white/5 bg-[#1C1C1C] p-3">
             <p
@@ -168,13 +169,9 @@ export default function Navbar() {
                       aria-hidden
                     />
                     <span className="flex min-w-0 flex-col">
+                      <span className={locationLabel}>{label}</span>
                       <span
-                        className={`${sortsMillGoudy.className} pt-1 text-xl leading-none tracking-[-0.06em] text-white`}
-                      >
-                        {label}
-                      </span>
-                      <span
-                        className={`${robotoMono.className} mt-1 text-xs leading-snug text-gray-500`}
+                        className={`${robotoMono.className} mt-1 line-clamp-2 text-xs leading-snug text-gray-500`}
                       >
                         {subtitle}
                       </span>

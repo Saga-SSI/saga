@@ -15,7 +15,7 @@ export default function Home() {
           <h1
             className={`${sortsMillGoudy.className} max-w-4xl text-7xl leading-none tracking-[-0.06em] text-white`}
           >
-            
+           The Intelligent <br /> Social Platform 
           </h1>
           <p
             className={`${navFont.className} text-[16px] tracking-[0.01em] text-white`}

@@ -14,19 +14,10 @@
       "dark": "#1C1C1C"
     }
   },
-  "appearance": {
-    "default": "dark"
-  },
-  "fonts": {
-    "family": "Sorts Mill Goudy",
-    "heading": {
-      "family": "Sorts Mill Goudy"
-    }
-  },
   "favicon": "/favicon.svg",
   "logo": {
-    "light": "/logo-light.svg",
-    "dark": "/logo-dark.svg",
+    "light": "/logo.svg",
+    "dark": "/logo.svg",
     "href": "http://localhost:3000"
   },
   "navigation": {
