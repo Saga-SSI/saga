@@ -1,11 +1,10 @@
 "use client";
 
 import AgentWindow from "@/components/dashboard/AgentWindow";
-import DocsAssistantWindow from "@/components/dashboard/DocsAssistantWindow";
 import Sidebar from "@/components/Sidebar";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 
-function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const { isSidebarOpen, closeSidebar } = useSidebar();
 
   return (
@@ -15,19 +14,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <main className="min-h-0 min-w-0 flex-1 overflow-auto">{children}</main>
       </div>
       <AgentWindow />
-      <DocsAssistantWindow />
     </div>
   );
 }
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      <AppLayoutContent>{children}</AppLayoutContent>
     </SidebarProvider>
   );
 }

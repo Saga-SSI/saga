@@ -44,20 +44,16 @@ const hubLocations = [
   },
 ] as const;
 
-const centerNav = {
-  beforeVillage: [
-    { label: "Tools", href: "/tools" },
-    { label: "Documentation", href: "/documentation" },
-  ],
-  afterVillage: [
-    { label: "Tribes", href: "/tribes" },
-    { label: "Blogs", href: "/blogs" },
-    { label: "Pricing", href: "/pricing" },
-  ],
-} as const;
+const centerNav = [
+  { label: "Tribes", href: "/tribes" },
+  { label: "Tools", href: "/tools" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Documentation", href: "/documentation" },
+  { label: "Pricing", href: "/pricing" },
+] as const;
 
 const authLinks = [
-  { href: "/log-in", label: "Log In" },
+  { href: "/sign-in", label: "Log In" },
   { href: "/sign-up", label: "Sign up" },
 ] as const;
 
@@ -97,16 +93,6 @@ export default function Navbar() {
             </Link>
 
             <div className="absolute inset-y-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1">
-              {centerNav.beforeVillage.map(({ label, href }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className={navLinkCenter}
-                >
-                  {label}
-                </Link>
-              ))}
-
               <button
                 type="button"
                 className={navLinkVillage}
@@ -116,7 +102,7 @@ export default function Navbar() {
                 Village
               </button>
 
-              {centerNav.afterVillage.map(({ label, href }) => (
+              {centerNav.map(({ label, href }) => (
                 <Link
                   key={href}
                   href={href}

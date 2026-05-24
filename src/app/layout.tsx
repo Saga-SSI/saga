@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import ClientLayout from "./client-layout";
 import { jannonText } from "./fonts";
 import "./globals.css";
 
@@ -34,7 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${jannonText.variable} min-h-svh overflow-x-auto antialiased dark`}
       >
-        {children}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

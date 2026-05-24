@@ -44,6 +44,22 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@cursor/sdk", "sqlite3"],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "**.convex.cloud",
+      },
+    ],
+  },
   async rewrites() {
     const { docsBase, assetsBase } = getMintlifyRewriteTargets();
 

@@ -10,12 +10,9 @@ export default function DashboardPage() {
           >
             Cursor on the Web
           </h1>
-          <p
-            className={`${navFont.className} mt-2 text-sm text-white/45`}
-          >
+          <p className={`${navFont.className} mt-2 text-sm text-white/45`}>
             Your workspace for building with Saga. Open Cursor Agent
-            (bottom-right) for codebase help or Docs Assistant (bottom-left)
-            for product documentation.
+            (bottom-right) for codebase help.
           </p>
         </header>
       </div>
