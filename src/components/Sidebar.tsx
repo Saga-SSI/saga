@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { HiChevronDown, HiCog, HiLogout, HiUser } from "react-icons/hi";
+import { HiChevronDown, HiCog, HiLightningBolt, HiLogout, HiUser } from "react-icons/hi";
 import { api } from "convex/_generated/api";
 import { dmSans, sortsMillGoudy } from "@/app/fonts";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -117,7 +117,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={`${
           isMobileOverlay ? "fixed" : "md:relative"
-        } inset-y-0 left-0 z-50 h-screen w-[16.2rem] transform overflow-hidden border-r border-solid border-gray-700 bg-[#1C1C1C] transition-all duration-300 ease-in-out ${
+        } inset-y-0 left-0 z-50 h-screen w-[16.2rem] transform overflow-hidden border-r border-solid border-white/5 bg-[#1C1C1C] transition-all duration-300 ease-in-out ${
           isMobileOverlay
             ? isOpen
               ? "translate-x-0"
@@ -137,7 +137,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           >
             <div className="flex w-full items-center justify-between">
               <Link
-                href="/dashboard"
+                href="/work"
                 className="flex items-center gap-3"
                 onClick={isMobileOverlay ? onClose : undefined}
               >
@@ -168,41 +168,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
 
           <div className={`${isCollapsed ? "px-2 pb-2" : "px-2 pb-4"} space-y-2`}>
-            <Link href="/dashboard" className="block w-full">
+            <Link href="/work" className="block w-full">
               <button
                 className={`cursor-pointer w-full flex items-center ${
                   isCollapsed ? "justify-center px-2 py-1.5" : "gap-2 px-2 py-1.5"
                 } rounded-full text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-all ${
-                  pathname === "/dashboard" ? "bg-[#2A2A2A] text-white" : ""
+                  pathname === "/work" ? "bg-[#2A2A2A] text-white" : ""
                 }`}
-                title={isCollapsed ? "Dashboard" : undefined}
+                title={isCollapsed ? "Work" : undefined}
+                onClick={isMobileOverlay ? onClose : undefined}
               >
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 20 20"
-                  className="size-4.5 shrink-0"
-                  fill="currentColor"
-                >
-                  <path d="M9.08 3.341a1.625 1.625 0 0 1 1.84 0l5.875 4.035c.441.304.705.805.705 1.34v6.034a2.125 2.125 0 0 1-2.125 2.125h-2.716a1.625 1.625 0 0 1-1.625-1.625v-4.065H8.967v4.065c0 .898-.728 1.625-1.625 1.625H4.625A2.125 2.125 0 0 1 2.5 14.75V8.716c0-.535.264-1.036.705-1.34zm1.132 1.03a.375.375 0 0 0-.424 0L3.913 8.407a.38.38 0 0 0-.163.309v6.034c0 .483.392.875.875.875h2.716a.375.375 0 0 0 .375-.375v-4.19c0-.621.503-1.125 1.125-1.125h2.319c.62 0 1.124.504 1.124 1.125v4.19c0 .207.168.375.375.375h2.716a.875.875 0 0 0 .875-.875V8.716c0-.124-.06-.24-.163-.31z" />
-                </svg>
+                <HiLightningBolt className="text-lg shrink-0" />
                 {!isCollapsed && (
-                  <span className={`${dmSans.className} font-medium text-sm`}>Dashboard</span>
-                )}
-              </button>
-            </Link>
-
-            <Link href="/profile" className="block w-full">
-              <button
-                className={`cursor-pointer w-full flex items-center ${
-                  isCollapsed ? "justify-center px-2 py-1.5" : "gap-2 px-2 py-1.5"
-                } rounded-full text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-all ${
-                  pathname === "/profile" ? "bg-[#2A2A2A] text-white" : ""
-                }`}
-                title={isCollapsed ? "Profile" : undefined}
-              >
-                <HiUser className="text-lg shrink-0" />
-                {!isCollapsed && (
-                  <span className={`${dmSans.className} font-medium text-sm`}>Profile</span>
+                  <span className={`${dmSans.className} font-medium text-sm`}>Work</span>
                 )}
               </button>
             </Link>
@@ -247,7 +225,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             )}
 
             <div
-              className={`${isCollapsed ? "p-2" : "p-2"} border-t border-gray-700 bg-[#1C1C1C] cursor-pointer ${
+              className={`${isCollapsed ? "p-2" : "p-2"} border-t border-white/5 bg-[#1C1C1C] cursor-pointer ${
                 !isDropdownOpen ? "hover:bg-[#2A2A2A]" : ""
               } transition-all`}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}

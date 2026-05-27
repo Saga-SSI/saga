@@ -55,6 +55,25 @@ export const getByClerkId = query({
   },
 });
 
+export const listForAssignment = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
+    const users = await ctx.db.query("users").collect();
+
+    return users
+      .map((user) => ({
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  },
+});
+
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
