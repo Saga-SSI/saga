@@ -20,6 +20,7 @@
     "@cursor/sdk": "^1.0.13",
     "ai": "^4.3.19",
     "convex": "^1.25.2",
+    "country-flag-icons": "^1.6.17",
     "framer-motion": "^12.40.0",
     "next": "^14.2.25",
     "react": "^18",

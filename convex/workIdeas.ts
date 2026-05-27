@@ -347,3 +347,25 @@ export const markDone = mutation({
     return { success: true };
   },
 });
+
+export const listActivityForUser = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const ideas = await ctx.db.query("workIdeas").collect();
+
+    return ideas
+      .filter(
+        (idea) =>
+          idea.authorId === args.userId || idea.assignedToId === args.userId,
+      )
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, 12)
+      .map((idea) => ({
+        _id: idea._id,
+        title: idea.title,
+        status: idea.status,
+        updatedAt: idea.updatedAt,
+        role: idea.authorId === args.userId ? ("author" as const) : ("assignee" as const),
+      }));
+  },
+});

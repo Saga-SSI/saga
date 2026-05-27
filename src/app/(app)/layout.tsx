@@ -1,6 +1,5 @@
 "use client";
 
-import AgentWindow from "@/components/dashboard/AgentWindow";
 import Sidebar from "@/components/Sidebar";
 import { SidebarProvider, useSidebar } from "@/contexts/SidebarContext";
 
@@ -13,7 +12,6 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
         <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         <main className="min-h-0 min-w-0 flex-1 overflow-auto">{children}</main>
       </div>
-      <AgentWindow />
     </div>
   );
 }

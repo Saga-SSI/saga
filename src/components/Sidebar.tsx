@@ -190,6 +190,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             ))}
           </div>
 
+          <div
+            className={`${isCollapsed ? "px-2" : "px-2"} mt-1 border-t border-white/5 pt-2`}
+          >
+            <SidebarNavItem
+              href="/profile"
+              label="Profile"
+              icon={HiUser}
+              isActive={
+                pathname === "/profile" || pathname.startsWith("/profile/")
+              }
+              isCollapsed={isCollapsed}
+              onNavigate={isMobileOverlay ? onClose : undefined}
+            />
+          </div>
+
           <div className="min-h-0 flex-1" />
 
           {isCollapsed && (

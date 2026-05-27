@@ -1,13 +1,21 @@
 import AppPageHeader from "@/components/AppPageHeader";
+import TribesGrid from "@/components/tribes/TribesGrid";
 
 export default function VillagePage() {
   return (
-    <div className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col p-6">
-      <div className="mx-auto flex h-full w-full max-w-3xl flex-col">
+    <div className="min-h-full p-6 pb-16">
+      <div className="mx-auto w-full max-w-7xl">
         <AppPageHeader
           title="Village"
           description="Explore Temple, School, Library, Studio, Factory, and Land."
         />
+
+        <section aria-labelledby="village-members-heading" className="mt-8">
+          <h2 id="village-members-heading" className="sr-only">
+            Village member profiles
+          </h2>
+          <TribesGrid />
+        </section>
       </div>
     </div>
   );

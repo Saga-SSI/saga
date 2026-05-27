@@ -1,41 +1,224 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
+import { HiOutlineColorSwatch } from "react-icons/hi";
 import { api } from "convex/_generated/api";
-import { dmSans, sortsMillGoudy } from "@/app/fonts";
-import EditProfileModal from "@/components/EditProfileModal";
+import { dmSans, robotoMono } from "@/app/fonts";
+import ProfileActivitySection from "@/components/profile/ProfileActivitySection";
+import ProfileInlineField from "@/components/profile/ProfileInlineField";
+import LocationDisplay from "@/components/profile/LocationDisplay";
+import LocationSearch from "@/components/profile/LocationSearch";
+import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
+import ProfileSection from "@/components/profile/ProfileSection";
+import ProfileTagSection from "@/components/profile/ProfileTagSection";
+import { useUnsavedChangesWarning } from "@/components/profile/useUnsavedChangesWarning";
+import {
+  buildLinksDraft,
+  hasAnyLinks,
+  linksDraftEqual,
+  serializeLinksDraft,
+  type ProfileLinksDraft,
+} from "@/lib/profileLinks";
+
+const DEFAULT_BANNER = "#2A2424";
+
+type ProfileDraft = {
+  name: string;
+  username: string;
+  location: string;
+  locationCountryCode: string;
+  bio: string;
+  bannerColor: string;
+  interests: string[];
+  skills: string[];
+  age: string;
+  sex: string;
+  links: ProfileLinksDraft;
+};
+
+function buildDraft(
+  currentUser: {
+    name?: string;
+    username?: string;
+    location?: string;
+    locationCountryCode?: string;
+    bio?: string;
+    bannerColor?: string;
+    interests?: string[];
+    skills?: string[];
+    age?: number;
+    sex?: string;
+    website?: string;
+    socialLinks?: Record<string, string>;
+  } | null | undefined,
+  fallbackName: string,
+): ProfileDraft {
+  return {
+    name: currentUser?.name || fallbackName,
+    username: currentUser?.username || "",
+    location: currentUser?.location || "",
+    locationCountryCode: currentUser?.locationCountryCode || "",
+    bio: currentUser?.bio || "",
+    bannerColor: currentUser?.bannerColor || DEFAULT_BANNER,
+    interests: currentUser?.interests || [],
+    skills: currentUser?.skills || [],
+    age: currentUser?.age ? String(currentUser.age) : "",
+    sex: currentUser?.sex || "",
+    links: buildLinksDraft(currentUser),
+  };
+}
+
+function draftsEqual(a: ProfileDraft, b: ProfileDraft) {
+  return (
+    a.name === b.name &&
+    a.username === b.username &&
+    a.location === b.location &&
+    a.locationCountryCode === b.locationCountryCode &&
+    a.bio === b.bio &&
+    a.bannerColor === b.bannerColor &&
+    a.age === b.age &&
+    a.sex === b.sex &&
+    a.interests.join("\0") === b.interests.join("\0") &&
+    a.skills.join("\0") === b.skills.join("\0") &&
+    linksDraftEqual(a.links, b.links)
+  );
+}
+
+function sexAbbreviation(sex: string) {
+  const abbreviations: Record<string, string> = {
+    Male: "M",
+    Female: "F",
+    "Non-binary": "N",
+    Other: "O",
+  };
+
+  return abbreviations[sex] ?? sex.charAt(0).toUpperCase();
+}
+
+function formatAgeSex(age: string, sex: string) {
+  if (age && sex) return `${age}${sexAbbreviation(sex)}`;
+  if (age) return age;
+  if (sex) return sexAbbreviation(sex);
+  return "";
+}
 
 export default function ProfilePage() {
   const { user, isLoaded: isUserLoaded } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isHoveringProfile, setIsHoveringProfile] = useState(false);
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const [isHoveringAvatar, setIsHoveringAvatar] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [draft, setDraft] = useState<ProfileDraft | null>(null);
+  const [savedDraft, setSavedDraft] = useState<ProfileDraft | null>(null);
 
   const currentUser = useQuery(
     api.users.getByClerkId,
     isUserLoaded && user ? { clerkId: user.id } : "skip",
   );
 
+  const avatarUrl = useQuery(
+    api.users.generateImageUrl,
+    currentUser?.avatarStorageId ? { storageId: currentUser.avatarStorageId } : "skip",
+  );
+
   const generateUploadUrl = useMutation(api.users.generateUploadUrl);
   const updateProfilePicture = useMutation(api.users.updateProfilePicture);
+  const updateProfile = useMutation(api.users.updateProfile);
 
-  const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const isOwner = true;
+  const fallbackName =
+    user?.firstName || user?.username || "User";
+
+  const savedProfile = useMemo(
+    () => buildDraft(currentUser, fallbackName),
+    [currentUser, fallbackName],
+  );
+
+  const viewProfile = savedProfile;
+  const editProfile = draft ?? savedProfile;
+  const displayProfile = isEditing ? editProfile : viewProfile;
+
+  const isDirty =
+    isEditing && draft !== null && savedDraft !== null && !draftsEqual(draft, savedDraft);
+
+  useUnsavedChangesWarning(
+    isDirty,
+    "You have unsaved profile changes. Leave without saving?",
+  );
+
+  useEffect(() => {
+    if (!isEditing) {
+      setDraft(null);
+      setSavedDraft(null);
+    }
+  }, [isEditing]);
+
+  const displayAvatar =
+    avatarUrl || currentUser?.avatarUrl || user?.imageUrl || "";
+
+  const patchDraft = (patch: Partial<ProfileDraft>) => {
+    setDraft((current) => ({ ...(current ?? savedProfile), ...patch }));
+  };
+
+  const startEditing = () => {
+    const initial = buildDraft(currentUser, fallbackName);
+    setDraft(initial);
+    setSavedDraft(initial);
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    if (isDirty) {
+      const shouldDiscard = window.confirm(
+        "You have unsaved changes. Discard them?",
+      );
+      if (!shouldDiscard) return;
+    }
+    setIsEditing(false);
+  };
+
+  const saveProfile = async () => {
+    if (!draft) return;
+
+    try {
+      setIsSaving(true);
+      const { website, socialLinks } = serializeLinksDraft(draft.links);
+      await updateProfile({
+        name: draft.name.trim(),
+        username: draft.username,
+        location: draft.location,
+        locationCountryCode: draft.locationCountryCode || undefined,
+        bio: draft.bio,
+        bannerColor: draft.bannerColor,
+        interests: draft.interests,
+        skills: draft.skills,
+        age: draft.age ? Number(draft.age) : undefined,
+        sex: draft.sex,
+        website: website || undefined,
+        socialLinks,
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+      window.alert("Could not save your profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleProfilePictureUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !isEditing) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image size should be less than 5MB");
-      return;
-    }
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 5 * 1024 * 1024) return;
 
     try {
       setIsUploading(true);
@@ -49,148 +232,238 @@ export default function ProfilePage() {
       await updateProfilePicture({ storageId });
     } catch (error) {
       console.error("Error uploading profile picture:", error);
-      alert("Failed to upload profile picture. Please try again.");
+      window.alert("Could not upload profile photo. Please try again.");
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const displayName =
-    currentUser?.name || user?.firstName || user?.username || "User";
-  const firstName = displayName.split(" ")[0];
-
   return (
-    <div className="min-h-full bg-[#1C1C1C] p-6 md:p-10">
-      <div className="mx-auto max-w-2xl">
-        <h1
-          className={`${sortsMillGoudy.className} mb-8 text-4xl tracking-[-0.05em] text-white`}
-        >
-          Profile
-        </h1>
-
-        <div className="rounded-lg border border-gray-700/50 bg-[#1C1C1C] p-6 space-y-6">
-          <div className="flex items-center gap-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleProfilePictureUpload}
-              className="hidden"
-            />
-
-            <div
-              className="relative w-20 h-20 rounded-full overflow-hidden bg-[#2A2A2A] border-2 border-gray-700/50 shrink-0 cursor-pointer group"
-              onMouseEnter={() => setIsHoveringProfile(true)}
-              onMouseLeave={() => setIsHoveringProfile(false)}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {currentUser?.avatarUrl || user?.imageUrl ? (
-                <Image
-                  src={currentUser?.avatarUrl || user?.imageUrl || ""}
-                  alt={displayName}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl">
-                  {firstName.charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              <div
-                className={`absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity ${
-                  isHoveringProfile || isUploading ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                {isUploading ? (
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                ) : (
-                  <span className={`${dmSans.className} text-white text-xs`}>Edit</span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h2
-                className={`${sortsMillGoudy.className} text-white text-3xl tracking-[-0.05em] truncate`}
-              >
-                {firstName}
-              </h2>
-              {currentUser?.username || user?.username ? (
-                <p className={`${dmSans.className} text-gray-400 text-sm mt-1`}>
-                  @{currentUser?.username || user?.username}
-                </p>
-              ) : (
-                <p className={`${dmSans.className} text-gray-500 text-sm mt-1 italic`}>
-                  You haven&apos;t setup your username, click edit to get yours.
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <p className={`${dmSans.className} text-gray-400 text-base leading-relaxed`}>
-              {currentUser?.bio || "No bio yet. Click edit to add one!"}
-            </p>
-
-            {currentUser?.website && (
-              <a
-                href={currentUser.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 mt-3 rounded-md transition-all text-white text-sm font-medium hover:opacity-90"
-                style={{
-                  backgroundColor: currentUser.buttonColor || "#FF1A00",
-                }}
-              >
-                Visit Website
-              </a>
-            )}
-
+    <div className="min-h-full bg-[#1C1C1C] pb-10">
+      <div
+        className="relative h-36 w-full transition-colors duration-300"
+        style={{ backgroundColor: displayProfile.bannerColor }}
+      >
+        <div className="absolute right-4 top-4 flex items-center gap-2">
+          {isOwner && !isEditing && (
             <button
-              onClick={() => setIsEditModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 mt-3 bg-[#181818] border border-gray-700/50 hover:border-gray-600 hover:bg-[#2A2A2A] rounded-md transition-all text-white text-sm font-medium cursor-pointer"
+              type="button"
+              onClick={startEditing}
+              className={`${dmSans.className} cursor-pointer rounded-lg border border-white/15 bg-black/20 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-sm transition-colors hover:bg-black/35`}
             >
               Edit profile
             </button>
-          </div>
+          )}
+
+          {isOwner && isEditing && (
+            <>
+              <button
+                type="button"
+                onClick={cancelEditing}
+                disabled={isSaving}
+                className={`${dmSans.className} cursor-pointer rounded-lg border border-white/15 bg-black/20 px-3 py-1.5 text-xs font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-black/35 disabled:opacity-50`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={saveProfile}
+                disabled={isSaving || !isDirty}
+                className={`${dmSans.className} cursor-pointer rounded-lg bg-[#FF1A00] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#E61700] disabled:cursor-not-allowed disabled:opacity-50`}
+              >
+                {isSaving ? "Saving…" : "Save"}
+              </button>
+            </>
+          )}
         </div>
+
+        {isOwner && isEditing && (
+          <>
+            <input
+              ref={colorInputRef}
+              type="color"
+              value={editProfile.bannerColor}
+              onChange={(e) => patchDraft({ bannerColor: e.target.value })}
+              className="sr-only"
+              aria-label="Choose profile banner color"
+            />
+            <button
+              type="button"
+              onClick={() => colorInputRef.current?.click()}
+              className={`${dmSans.className} absolute left-4 top-4 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-white/15 bg-black/20 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-sm transition-colors hover:bg-black/35`}
+            >
+              <HiOutlineColorSwatch className="size-4" />
+              Edit cover
+            </button>
+          </>
+        )}
       </div>
 
-      <EditProfileModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        currentName={currentUser?.name || user?.firstName || user?.username || ""}
-        currentBio={currentUser?.bio || ""}
-        currentUsername={currentUser?.username}
-        currentWebsite={currentUser?.website}
-        currentButtonColor={currentUser?.buttonColor}
-        currentAvatarUrl={currentUser?.avatarUrl || user?.imageUrl}
-        currentAvatarStorageId={currentUser?.avatarStorageId || undefined}
-      />
+      <div className="mx-auto max-w-3xl px-6">
+        <div className="relative -mt-[4.2rem] flex items-start gap-4">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleProfilePictureUpload}
+            className="hidden"
+          />
+
+          <button
+            type="button"
+            disabled={!isOwner || !isEditing || isUploading}
+            onClick={() => isEditing && fileInputRef.current?.click()}
+            onMouseEnter={() => setIsHoveringAvatar(true)}
+            onMouseLeave={() => setIsHoveringAvatar(false)}
+            className={`relative size-[8.4rem] shrink-0 overflow-hidden rounded-full border-4 border-[#1C1C1C] bg-[#2A2A2A] ${
+              isOwner && isEditing ? "cursor-pointer" : "cursor-default"
+            }`}
+          >
+            {displayAvatar ? (
+              <Image
+                src={displayAvatar}
+                alt={displayProfile.name}
+                width={134}
+                height={134}
+                className="size-full object-cover"
+              />
+            ) : (
+              <span
+                className={`${dmSans.className} flex size-full items-center justify-center text-4xl text-white/60`}
+              >
+                {displayProfile.name.charAt(0).toUpperCase()}
+              </span>
+            )}
+
+            {isOwner && isEditing && (isHoveringAvatar || isUploading) && (
+              <span className="absolute inset-0 flex items-center justify-center bg-black/55 text-xs text-white">
+                {isUploading ? "Uploading…" : "Edit photo"}
+              </span>
+            )}
+          </button>
+
+          <div className="flex min-w-0 flex-1 items-start justify-between gap-4 pt-[5.25rem]">
+            <div className="min-w-0">
+              <ProfileInlineField
+                value={displayProfile.name}
+                placeholder="Your name"
+                editable={false}
+                variant="title"
+                className="leading-none"
+              />
+
+              {displayProfile.username ? (
+                <p className={`${dmSans.className} mt-0.5 text-sm leading-none text-white/45`}>
+                  @{displayProfile.username}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="shrink-0 space-y-1 pt-1 text-right">
+              {isOwner && isEditing ? (
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center justify-end gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={120}
+                      value={displayProfile.age}
+                      onChange={(e) => patchDraft({ age: e.target.value })}
+                      placeholder="24"
+                      className={`${robotoMono.className} w-12 rounded-md border border-white/10 bg-[#141414] px-2 py-1 text-right text-sm text-white/70 outline-none placeholder:text-white/25 focus:border-white/20`}
+                    />
+                    <select
+                      value={displayProfile.sex}
+                      onChange={(e) => patchDraft({ sex: e.target.value })}
+                      className={`${robotoMono.className} rounded-md border border-white/10 bg-[#141414] px-2 py-1 text-sm text-white/70 outline-none focus:border-white/20`}
+                    >
+                      <option value="">—</option>
+                      <option value="Female">F</option>
+                      <option value="Male">M</option>
+                      <option value="Non-binary">N</option>
+                      <option value="Other">O</option>
+                    </select>
+                  </div>
+                  <LocationSearch
+                    location={displayProfile.location}
+                    countryCode={displayProfile.locationCountryCode}
+                    align="right"
+                    onChange={({ location, countryCode }) =>
+                      patchDraft({ location, locationCountryCode: countryCode })
+                    }
+                  />
+                </div>
+              ) : (
+                <>
+                  <p className={`${robotoMono.className} text-sm text-white/55`}>
+                    {formatAgeSex(displayProfile.age, displayProfile.sex) || "—"}
+                  </p>
+                  <LocationDisplay
+                    location={displayProfile.location}
+                    countryCode={displayProfile.locationCountryCode}
+                    align="right"
+                  />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {isDirty && (
+          <p className={`${dmSans.className} mt-4 text-xs text-[#FF6B55]`}>
+            Unsaved changes — click Save before leaving this page.
+          </p>
+        )}
+
+        <div className="mt-4 space-y-3 pb-8">
+          <ProfileInlineField
+            value={displayProfile.bio}
+            placeholder="Add a short bio"
+            editable={isOwner && isEditing}
+            variant="subtitle"
+            onChange={(bio) => patchDraft({ bio })}
+          />
+
+          {!isEditing && !displayProfile.bio && (
+            <p className={`${dmSans.className} text-sm text-white/30`}>No bio yet.</p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          {(isEditing || hasAnyLinks(displayProfile.links)) && (
+            <ProfileSection title="Links" transparent>
+              <ProfileLinksSection
+                links={displayProfile.links}
+                editable={isOwner && isEditing}
+                onChange={(links) => patchDraft({ links })}
+              />
+            </ProfileSection>
+          )}
+
+          <ProfileSection title="Interests" transparent>
+            <ProfileTagSection
+              tags={displayProfile.interests}
+              placeholder="Add an interest and press Enter"
+              editable={isOwner && isEditing}
+              onChange={(interests) => patchDraft({ interests })}
+            />
+          </ProfileSection>
+
+          <ProfileSection title="Skills" transparent>
+            <ProfileTagSection
+              tags={displayProfile.skills}
+              placeholder="Add a skill and press Enter"
+              editable={isOwner && isEditing}
+              onChange={(skills) => patchDraft({ skills })}
+            />
+          </ProfileSection>
+
+          <ProfileSection title="Activity">
+            <ProfileActivitySection userId={currentUser?._id} />
+          </ProfileSection>
+        </div>
+      </div>
     </div>
   );
 }
