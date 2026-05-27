@@ -53,7 +53,7 @@ export default function SignInPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        router.push("/home");
       } else {
         setError("Sign in failed. Please try again.");
       }
@@ -75,7 +75,7 @@ export default function SignInPage() {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/home",
       });
     } catch (err: unknown) {
       const clerkErr = err as { errors?: Array<{ message?: string }> };

@@ -6,12 +6,21 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { HiChevronDown, HiCog, HiLightningBolt, HiLogout, HiUser } from "react-icons/hi";
+import { HiChevronDown, HiCog, HiHome, HiLightningBolt, HiLogout, HiUser, HiUserGroup } from "react-icons/hi";
+import { HiBuildingOffice2 } from "react-icons/hi2";
 import { api } from "convex/_generated/api";
-import { dmSans, sagaLogoClass } from "@/app/fonts";
+import { dmSans, sagaLogoClass, sortsMillGoudy } from "@/app/fonts";
 import { useSidebar } from "@/contexts/SidebarContext";
 import SidebarToggleButton from "./SidebarToggleButton";
+import SidebarNavItem from "./SidebarNavItem";
 import EditProfileModal from "./EditProfileModal";
+
+const navItems = [
+  { href: "/home", label: "Home", icon: HiHome },
+  { href: "/tribes", label: "Tribes", icon: HiUserGroup },
+  { href: "/village", label: "Village", icon: HiBuildingOffice2 },
+  { href: "/work", label: "Work", icon: HiLightningBolt },
+] as const;
 
 interface SidebarProps {
   isOpen: boolean;
@@ -137,7 +146,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           >
             <div className="flex w-full items-center justify-between">
               <Link
-                href="/work"
+                href="/home"
                 className="flex items-center gap-3"
                 onClick={isMobileOverlay ? onClose : undefined}
               >
@@ -167,23 +176,18 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
 
-          <div className={`${isCollapsed ? "px-2 pb-2" : "px-2 pb-4"} space-y-2`}>
-            <Link href="/work" className="block w-full">
-              <button
-                className={`cursor-pointer w-full flex items-center ${
-                  isCollapsed ? "justify-center px-2 py-1.5" : "gap-2 px-2 py-1.5"
-                } rounded-full text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-all ${
-                  pathname === "/work" ? "bg-[#2A2A2A] text-white" : ""
-                }`}
-                title={isCollapsed ? "Work" : undefined}
-                onClick={isMobileOverlay ? onClose : undefined}
-              >
-                <HiLightningBolt className="text-lg shrink-0" />
-                {!isCollapsed && (
-                  <span className={`${dmSans.className} font-medium text-sm`}>Work</span>
-                )}
-              </button>
-            </Link>
+          <div className={`${isCollapsed ? "px-2 pb-2" : "px-2 pb-4"} space-y-1`}>
+            {navItems.map(({ href, label, icon }) => (
+              <SidebarNavItem
+                key={href}
+                href={href}
+                label={label}
+                icon={icon}
+                isActive={pathname === href || pathname.startsWith(`${href}/`)}
+                isCollapsed={isCollapsed}
+                onNavigate={isMobileOverlay ? onClose : undefined}
+              />
+            ))}
           </div>
 
           <div className="min-h-0 flex-1" />

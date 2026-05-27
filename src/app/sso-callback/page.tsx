@@ -14,9 +14,9 @@ function SSOCallbackContent() {
     const handleCallback = async () => {
       try {
         await handleRedirectCallback({
-          redirectUrl: searchParams.get("redirect_url") || "/dashboard",
+          redirectUrl: searchParams.get("redirect_url") || "/home",
         });
-        router.push("/dashboard");
+        router.push("/home");
       } catch (err) {
         console.error("SSO callback error:", err);
         router.push("/sign-in");

@@ -33,7 +33,7 @@ export default function SignUpPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push("/dashboard");
+        router.push("/home");
       } else {
         await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
         setVerifying(true);
@@ -64,7 +64,7 @@ export default function SignUpPage() {
 
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
-        router.push("/dashboard");
+        router.push("/home");
       } else {
         setError("Verification incomplete. Please try again.");
       }
@@ -86,7 +86,7 @@ export default function SignUpPage() {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/home",
       });
     } catch (err: unknown) {
       const clerkErr = err as { errors?: Array<{ message?: string }> };
