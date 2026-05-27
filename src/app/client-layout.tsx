@@ -25,7 +25,7 @@ function UserSync() {
       avatarUrl: user.imageUrl,
       username: user.username || undefined,
     });
-  }, [user?.id, isUserLoaded, getOrCreateUser, checkUser]);
+  }, [user, isUserLoaded, getOrCreateUser, checkUser]);
 
   return null;
 }

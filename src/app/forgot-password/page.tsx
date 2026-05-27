@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { dmSans, sortsMillGoudy, sagaLogoClass } from "@/app/fonts";
+import { dmSans, sagaLogoClass } from "@/app/fonts";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
