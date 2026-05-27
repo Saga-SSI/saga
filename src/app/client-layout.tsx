@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useUser } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { api } from "convex/_generated/api";
+import { PresenceHeartbeat } from "@/components/PresenceHeartbeat";
 import { Providers } from "./providers";
 
 function UserSync() {
@@ -38,6 +39,7 @@ export default function ClientLayout({
   return (
     <Providers>
       <UserSync />
+      <PresenceHeartbeat />
       <Toaster theme="dark" />
       {children}
     </Providers>

@@ -7,7 +7,7 @@ export default function VillagePage() {
       <div className="mx-auto w-full max-w-7xl">
         <AppPageHeader
           title="Village"
-          description="Explore Temple, School, Library, Studio, Factory, and Land."
+          description="Find the people working in the village."
         />
 
         <section aria-labelledby="village-members-heading" className="mt-8">

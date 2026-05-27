@@ -80,6 +80,41 @@ export const getByClerkId = query({
   },
 });
 
+export const getPublicById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const user = await ctx.db.get(args.userId);
+    if (!user) return null;
+
+    let avatarUrl = user.avatarUrl;
+    if (user.avatarStorageId) {
+      const storageUrl = await ctx.storage.getUrl(user.avatarStorageId);
+      if (storageUrl) avatarUrl = storageUrl;
+    }
+
+    return {
+      _id: user._id,
+      clerkId: user.clerkId,
+      name: user.name,
+      username: user.username,
+      avatarUrl,
+      bannerColor: user.bannerColor,
+      bio: user.bio,
+      location: user.location,
+      locationCountryCode: user.locationCountryCode,
+      website: user.website,
+      socialLinks: user.socialLinks,
+      interests: user.interests ?? [],
+      skills: user.skills ?? [],
+      age: user.age,
+      sex: user.sex,
+    };
+  },
+});
+
 export const listForAssignment = query({
   args: {},
   handler: async (ctx) => {

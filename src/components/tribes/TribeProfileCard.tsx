@@ -3,13 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { dmSans, robotoMono, sortsMillGoudy } from "@/app/fonts";
-import {
-  VH,
-  VW,
-  buildMosaicPalette,
-  buildTriStyle,
-  mosaicParamsFromSeed,
-} from "@/components/tribes/hexMosaic";
+import { formatLastOnline } from "@/lib/presence";
+import { userProfilePath } from "@/lib/profilePaths";
 
 export type TribeProfile = {
   _id: string;
@@ -28,6 +23,8 @@ export type TribeProfile = {
 type TribeProfileCardProps = {
   profile: TribeProfile;
   isCurrentUser?: boolean;
+  isOnline?: boolean;
+  lastDisconnected?: number;
 };
 
 const AVATAR_SIZE = 72;
@@ -60,33 +57,25 @@ function displayFocus(interests: string[], location?: string, bio?: string) {
 export default function TribeProfileCard({
   profile,
   isCurrentUser = false,
+  isOnline = false,
+  lastDisconnected,
 }: TribeProfileCardProps) {
   const bannerColor = profile.bannerColor || DEFAULT_BANNER;
-  const { rot, triangles } = mosaicParamsFromSeed(profile._id);
-  const shades = buildMosaicPalette(bannerColor);
-  const triStyle = buildTriStyle(shades);
   const skills = displaySkills(profile.skills, profile.interests);
   const focusLine = displayFocus(profile.interests, profile.location, profile.bio);
   const usernameLine = profile.username ? `@${profile.username}` : null;
+  const presenceLine = isOnline
+    ? "Online"
+    : lastDisconnected
+      ? `Last online ${formatLastOnline(lastDisconnected)}`
+      : null;
 
   return (
     <article className="relative flex min-w-0 flex-col border border-white/10 bg-[#181818] shadow-[0_8px_32px_rgba(0,0,0,0.35)]">
-      <div className="w-full overflow-hidden" style={{ height: BANNER_H }}>
-        <svg
-          viewBox={`0 0 ${VW} ${VH}`}
-          preserveAspectRatio="xMidYMid slice"
-          aria-hidden
-          className="h-full w-full"
-        >
-          <style>{triStyle}</style>
-          <rect width={VW} height={VH} fill={bannerColor} />
-          <g transform={`rotate(${rot} ${VW / 2} ${VH / 2})`}>
-            {triangles.map(({ id, pts, shade }) => (
-              <polygon key={id} className={`tri tri-${shade}`} points={pts} />
-            ))}
-          </g>
-        </svg>
-      </div>
+      <div
+        className="w-full"
+        style={{ height: BANNER_H, backgroundColor: bannerColor }}
+      />
 
       <div
         className="absolute left-4 overflow-hidden rounded-full border-[3px] border-[#1C1C1C] bg-[#2A2A2A]"
@@ -111,6 +100,12 @@ export default function TribeProfileCard({
             {initialsFromName(profile.name)}
           </span>
         )}
+        {isOnline && (
+          <span
+            className="absolute bottom-0.5 right-0.5 size-3.5 rounded-full border-2 border-[#1C1C1C] bg-green-500"
+            aria-label="Online"
+          />
+        )}
       </div>
 
       <div
@@ -123,7 +118,13 @@ export default function TribeProfileCard({
           >
             {profile.name}
           </h3>
-          {usernameLine ? (
+          {presenceLine ? (
+            <p
+              className={`${dmSans.className} text-xs ${isOnline ? "text-green-400" : "text-white/35"}`}
+            >
+              {presenceLine}
+            </p>
+          ) : usernameLine ? (
             <p className={`${dmSans.className} text-xs text-white/40`}>{usernameLine}</p>
           ) : null}
         </div>
@@ -149,20 +150,12 @@ export default function TribeProfileCard({
             Connect
           </button>
 
-          {isCurrentUser ? (
-            <Link
-              href="/profile"
-              className={`${robotoMono.className} text-[11px] font-semibold uppercase tracking-widest text-[#FF6B55] transition-colors hover:text-[#FF1A00] hover:underline`}
-            >
-              View Profile
-            </Link>
-          ) : (
-            <span
-              className={`${robotoMono.className} text-[11px] font-semibold uppercase tracking-widest text-white/25`}
-            >
-              View Profile
-            </span>
-          )}
+          <Link
+            href={isCurrentUser ? "/profile" : userProfilePath(profile._id)}
+            className={`${robotoMono.className} text-[11px] font-semibold uppercase tracking-widest text-[#FF6B55] transition-colors hover:text-[#FF1A00] hover:underline`}
+          >
+            View Profile
+          </Link>
         </div>
       </div>
     </article>
