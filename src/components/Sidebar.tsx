@@ -9,7 +9,7 @@ import { useQuery } from "convex/react";
 import { HiChevronDown, HiCog, HiHome, HiLightningBolt, HiLogout, HiUser, HiUserGroup } from "react-icons/hi";
 import { HiBuildingOffice2 } from "react-icons/hi2";
 import { api } from "convex/_generated/api";
-import { dmSans, sagaLogoClass, sortsMillGoudy } from "@/app/fonts";
+import { dmSans, sagaLogoClass } from "@/app/fonts";
 import { useSidebar } from "@/contexts/SidebarContext";
 import SidebarToggleButton from "./SidebarToggleButton";
 import SidebarNavItem from "./SidebarNavItem";
@@ -36,7 +36,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-  const [isSetupProfileMode, setIsSetupProfileMode] = useState(false);
   const [isMobileOverlay, setIsMobileOverlay] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -214,35 +213,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
 
           <div className="mt-auto">
-            {!isCollapsed && !currentUser?.username && (
-              <div className="px-2 pt-2 pb-1">
-                <div className="p-3 rounded-lg border border-gray-700 bg-[#1C1C1C]">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3
-                      className={`${sortsMillGoudy.className} text-white text-lg font-medium`}
-                    >
-                      Get Started
-                    </h3>
-                    <p className={`${dmSans.className} text-gray-500 text-xs shrink-0`}>
-                      Step 0/1
-                    </p>
-                  </div>
-                  <p className={`${dmSans.className} text-gray-400 text-xs mt-1`}>
-                    Complete your profile & get to connect with others.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setIsSetupProfileMode(true);
-                      setIsEditProfileModalOpen(true);
-                    }}
-                    className={`${dmSans.className} mt-3 w-full py-2 px-3 rounded-md text-sm font-medium text-white bg-[#FF1A00] hover:bg-[#E61700] transition-colors cursor-pointer`}
-                  >
-                    Finish profile
-                  </button>
-                </div>
-              </div>
-            )}
-
             <div
               className={`${isCollapsed ? "p-2" : "p-2"} border-t border-white/5 bg-[#1C1C1C] cursor-pointer ${
                 !isDropdownOpen ? "hover:bg-[#2A2A2A]" : ""
@@ -351,11 +321,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       <EditProfileModal
         isOpen={isEditProfileModalOpen}
-        onClose={() => {
-          setIsEditProfileModalOpen(false);
-          setIsSetupProfileMode(false);
-        }}
-        requireUsername={isSetupProfileMode}
+        onClose={() => setIsEditProfileModalOpen(false)}
         currentName={currentUser?.name || user?.firstName || user?.username || ""}
         currentBio={currentUser?.bio || ""}
         currentUsername={currentUser?.username}
