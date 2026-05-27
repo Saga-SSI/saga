@@ -40,18 +40,8 @@ function initialsFromName(name: string) {
     .toUpperCase();
 }
 
-function displaySkills(skills: string[], interests: string[]) {
-  const source = skills.length > 0 ? skills : interests;
-  return source.slice(0, 3);
-}
-
-function displayFocus(interests: string[], location?: string, bio?: string) {
-  if (interests.length > 0) {
-    return `Building · ${interests.slice(0, 2).join(", ")}`;
-  }
-  if (location) return location;
-  if (bio) return bio.length > 72 ? `${bio.slice(0, 72)}…` : bio;
-  return "Member of Saga";
+function truncateBio(bio: string, maxLength = 120) {
+  return bio.length > maxLength ? `${bio.slice(0, maxLength)}…` : bio;
 }
 
 export default function TribeProfileCard({
@@ -61,9 +51,9 @@ export default function TribeProfileCard({
   lastDisconnected,
 }: TribeProfileCardProps) {
   const bannerColor = profile.bannerColor || DEFAULT_BANNER;
-  const skills = displaySkills(profile.skills, profile.interests);
-  const focusLine = displayFocus(profile.interests, profile.location, profile.bio);
+  const skills = profile.skills.slice(0, 3);
   const usernameLine = profile.username ? `@${profile.username}` : null;
+  const bioLine = profile.bio ? truncateBio(profile.bio) : null;
   const presenceLine = isOnline
     ? "Online"
     : lastDisconnected
@@ -127,20 +117,20 @@ export default function TribeProfileCard({
           ) : usernameLine ? (
             <p className={`${dmSans.className} text-xs text-white/40`}>{usernameLine}</p>
           ) : null}
-        </div>
-
-        <div className="space-y-2">
-          {skills.length > 0 ? (
-            <p
-              className={`${robotoMono.className} wrap-break-word text-[11px] uppercase tracking-wide text-white/55`}
-            >
-              {skills.join(" · ")}
+          {bioLine ? (
+            <p className={`${dmSans.className} wrap-break-word text-xs leading-relaxed text-white/50`}>
+              {bioLine}
             </p>
           ) : null}
-          <p className={`${robotoMono.className} wrap-break-word text-[10px] text-white/35`}>
-            {focusLine}
-          </p>
         </div>
+
+        {skills.length > 0 ? (
+          <p
+            className={`${robotoMono.className} wrap-break-word text-[11px] uppercase tracking-wide text-white/55`}
+          >
+            {skills.join(" · ")}
+          </p>
+        ) : null}
 
         <div className="mt-auto flex items-center justify-between gap-3">
           <button

@@ -13,7 +13,38 @@ type PresenceEntry = {
   lastDisconnected: number;
 };
 
-export default function TribesGrid() {
+type TribesGridProps = {
+  searchQuery?: string;
+};
+
+function profileMatchesSearch(
+  profile: {
+    name: string;
+    username?: string;
+    bio?: string;
+    location?: string;
+    skills: string[];
+  },
+  query: string,
+) {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return true;
+
+  const haystack = [
+    profile.name,
+    profile.username,
+    profile.bio,
+    profile.location,
+    ...profile.skills,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return haystack.includes(normalized);
+}
+
+export default function TribesGrid({ searchQuery = "" }: TribesGridProps) {
   const { user, isLoaded: isUserLoaded } = useUser();
   const profiles = useQuery(api.users.listForTribes, isUserLoaded && user ? {} : "skip");
   const villagePresence = useQuery(
@@ -30,13 +61,15 @@ export default function TribesGrid() {
 
   const sortedProfiles = useMemo(() => {
     if (!profiles) return undefined;
-    return [...profiles].sort((a, b) => {
-      const aOnline = presenceByUserId.get(a._id)?.online ? 1 : 0;
-      const bOnline = presenceByUserId.get(b._id)?.online ? 1 : 0;
-      if (bOnline !== aOnline) return bOnline - aOnline;
-      return a.name.localeCompare(b.name);
-    });
-  }, [profiles, presenceByUserId]);
+    return [...profiles]
+      .filter((profile) => profileMatchesSearch(profile, searchQuery))
+      .sort((a, b) => {
+        const aOnline = presenceByUserId.get(a._id)?.online ? 1 : 0;
+        const bOnline = presenceByUserId.get(b._id)?.online ? 1 : 0;
+        if (bOnline !== aOnline) return bOnline - aOnline;
+        return a.name.localeCompare(b.name);
+      });
+  }, [profiles, presenceByUserId, searchQuery]);
 
   const onlineCount = useMemo(() => {
     if (!sortedProfiles) return 0;
@@ -50,9 +83,12 @@ export default function TribesGrid() {
   }
 
   if (sortedProfiles.length === 0) {
+    const hasSearch = searchQuery.trim().length > 0;
     return (
       <p className={`${dmSans.className} text-sm text-white/40`}>
-        No members yet. As people join the village, their profiles will show up here.
+        {hasSearch
+          ? "No members match your search."
+          : "No members yet. As people join the village, their profiles will show up here."}
       </p>
     );
   }
