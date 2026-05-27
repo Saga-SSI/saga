@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { dmSans, sortsMillGoudy } from "@/app/fonts";
+import { dmSans, sortsMillGoudy, sagaLogoClass } from "@/app/fonts";
 
 export default function ForgotPasswordPage() {
   const { isLoaded, signIn } = useSignIn();
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-2 mb-8">
           <Image src="/logo.new.svg" alt="Saga" width={32} height={32} />
-          <span className={`${sortsMillGoudy.className} text-3xl text-white`}>Saga</span>
+          <span className={`${sagaLogoClass} text-3xl text-white`}>Saga</span>
         </div>
 
         <div className="mb-8 text-center">

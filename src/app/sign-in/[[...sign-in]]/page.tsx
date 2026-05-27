@@ -5,7 +5,7 @@ import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { dmMono, sortsMillGoudy, dmSans, fragmentMono } from "@/app/fonts";
+import { dmMono, sortsMillGoudy, dmSans, fragmentMono, sagaLogoClass } from "@/app/fonts";
 
 export default function SignInPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -90,7 +90,7 @@ export default function SignInPage() {
         <div className="flex-1 max-w-md">
           <div className="flex items-center gap-2">
             <Image src="/logo.new.svg" alt="Saga" width={32} height={32} className="mr-1" />
-            <span className={`${sortsMillGoudy.className} text-3xl text-white tracking-[-0.02em]`}>
+            <span className={`${sagaLogoClass} text-3xl text-white tracking-[-0.02em]`}>
               Saga
             </span>
           </div>

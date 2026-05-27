@@ -3,7 +3,7 @@
 import { useId } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { robotoMono, sortsMillGoudy } from "@/app/fonts";
+import { robotoMono, sagaLogoClass } from "@/app/fonts";
 
 const hubLocations = [
   {
@@ -86,7 +86,7 @@ export default function Navbar() {
                 unoptimized
               />
               <p
-                className={`${sortsMillGoudy.className} pt-1 text-3xl leading-none tracking-[-0.06em] text-white`}
+                className={`${sagaLogoClass} pt-1 text-3xl leading-none tracking-[-0.06em] text-white`}
               >
                 Saga
               </p>

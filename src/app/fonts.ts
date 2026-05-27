@@ -25,6 +25,9 @@ export const sortsMillGoudy = Sorts_Mill_Goudy({
   style: ["normal", "italic"],
 });
 
+/** Saga wordmark — always regular weight, never bold */
+export const sagaLogoClass = `${sortsMillGoudy.className} font-normal`;
+
 export const jannonText = localFont({
   src: "./fonts/Jannon Text Regular.otf",
   variable: "--font-jannon-text",

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { dmMono, sortsMillGoudy, dmSans } from "@/app/fonts";
+import { dmMono, sortsMillGoudy, dmSans, sagaLogoClass } from "@/app/fonts";
 
 export default function VerifyEmailPage() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function VerifyEmailPage() {
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 mb-8">
           <Image src="/logo.new.svg" alt="Saga" width={32} height={32} className="mr-1" />
-          <span className={`${sortsMillGoudy.className} text-4xl text-white tracking-[-0.02em]`}>
+          <span className={`${sagaLogoClass} text-4xl text-white tracking-[-0.02em]`}>
             Saga
           </span>
         </div>

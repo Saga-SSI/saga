@@ -8,7 +8,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { HiChevronDown, HiCog, HiLightningBolt, HiLogout, HiUser } from "react-icons/hi";
 import { api } from "convex/_generated/api";
-import { dmSans, sortsMillGoudy } from "@/app/fonts";
+import { dmSans, sagaLogoClass } from "@/app/fonts";
 import { useSidebar } from "@/contexts/SidebarContext";
 import SidebarToggleButton from "./SidebarToggleButton";
 import EditProfileModal from "./EditProfileModal";
@@ -151,7 +151,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 />
                 {!isCollapsed && (
                   <span
-                    className={`${sortsMillGoudy.className} text-[2rem] font-bold leading-none tracking-[-0.07em] text-white`}
+                    className={`${sagaLogoClass} text-[2rem] leading-none tracking-[-0.07em] text-white`}
                   >
                     Saga
                   </span>
